@@ -16,7 +16,7 @@ import {
 } from '@kishornaik/utils';
 import { GetUsersRequestDto, GetUsersResponseDto } from '../contracts';
 import { getTraceId, logger } from '@/shared/utils/helpers/loggers';
-import { GetUsersDbService } from './services/db';
+import { GetUsersDbService } from '../services/db';
 
 // #region Query
 @sealed
@@ -53,10 +53,10 @@ export class GetUserQueryHandler
 	}
 
 	public async handle(value: GetUsersQuery): Promise<DataResponse<GetUsersResponseDto[]>> {
-		return await ExceptionsWrapper.tryCatchPipelineAsync(async () => {
-			// Get traceId
-			const traceId = getTraceId();
+		// Get traceId
+		const traceId = getTraceId();
 
+		return await ExceptionsWrapper.tryCatchPipelineAsync(async () => {
 			// Guard
 			const guardResult = new GuardWrapper()
 				.check(value, `value`)
@@ -65,7 +65,10 @@ export class GetUserQueryHandler
 			if (guardResult?.isErr())
 				return DataResponseFactory.error(
 					StatusCodes.BAD_REQUEST,
-					guardResult.error.message
+					guardResult.error.message,
+					undefined,
+					traceId,
+					undefined
 				);
 
 			const { request } = value;
@@ -97,7 +100,7 @@ export class GetUserQueryHandler
 				traceId,
 				undefined
 			);
-		});
+		}, traceId);
 	}
 }
 // #endregion

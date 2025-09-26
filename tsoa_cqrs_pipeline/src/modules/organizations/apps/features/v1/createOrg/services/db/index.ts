@@ -10,7 +10,7 @@ import {
 	VOID_RESULT,
 	VoidResult,
 } from '@kishornaik/utils';
-import { CreateOrgRequestDto } from '../../../contract';
+import { CreateOrgRequestDto } from '../../contract';
 
 export interface ICreateOrgDbService extends IServiceHandlerVoidAsync<CreateOrgRequestDto> {}
 

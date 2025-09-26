@@ -12,8 +12,8 @@ import {
 	StatusCodes,
 } from '@kishornaik/utils';
 import { UpdateUserRequestDto, UpdateUserResponseDto } from '../contract';
-import { logger } from '@/shared/utils/helpers/loggers';
-import { UpdateUserDbService } from './services/db';
+import { getTraceId, logger } from '@/shared/utils/helpers/loggers';
+import { UpdateUserDbService } from '../services/db';
 
 // #region Command
 @sealed
@@ -51,6 +51,9 @@ export class UpdateUserCommandHandler
 	}
 
 	public async handle(value: UpdateUserCommand): Promise<DataResponse<UpdateUserResponseDto>> {
+		// Get traceId
+		const traceId = getTraceId();
+
 		return await ExceptionsWrapper.tryCatchPipelineAsync(async () => {
 			// Guard
 			const guard = new GuardWrapper()
@@ -58,7 +61,13 @@ export class UpdateUserCommandHandler
 				.check(value.request, `request`)
 				.validate();
 			if (guard.isErr())
-				return DataResponseFactory.error(StatusCodes.BAD_REQUEST, guard.error.message);
+				return DataResponseFactory.error(
+					StatusCodes.BAD_REQUEST,
+					guard.error.message,
+					undefined,
+					traceId,
+					undefined
+				);
 
 			const { request } = value;
 
@@ -72,8 +81,15 @@ export class UpdateUserCommandHandler
 				PipelineSteps.DB_SERVICE
 			);
 
-			return DataResponseFactory.success(StatusCodes.OK, dbServiceResponse, 'Success');
-		});
+			return DataResponseFactory.success(
+				StatusCodes.OK,
+				dbServiceResponse,
+				'Success',
+				undefined,
+				traceId,
+				undefined
+			);
+		}, traceId);
 	}
 }
 

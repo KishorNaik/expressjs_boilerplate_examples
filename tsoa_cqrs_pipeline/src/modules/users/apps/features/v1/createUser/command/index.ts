@@ -27,7 +27,7 @@ import {
 } from '../../../../../shared/services/hashPassword';
 import { CreateUserRequestDto, CreateUserResponseDto } from '../contract';
 import { getTraceId, logger } from '@/shared/utils/helpers/loggers';
-import { CreateUserDbService } from './services/db';
+import { CreateUserDbService } from '../services/db';
 
 // #region Command
 @sealed
@@ -69,11 +69,11 @@ export class CreateUserCommandHandler
 	}
 
 	public async handle(value: CreateUserCommand): Promise<DataResponse<CreateUserResponseDto>> {
+		// Get traceId
+		const traceId = getTraceId();
+
 		return await ExceptionsWrapper.tryCatchPipelineAsync(async () => {
 			const { request } = value;
-
-			// Get traceId
-			const traceId = getTraceId();
 
 			// Guard checks
 			const guardResult = new GuardWrapper()
@@ -83,7 +83,10 @@ export class CreateUserCommandHandler
 			if (guardResult?.isErr())
 				return DataResponseFactory.error(
 					StatusCodes.BAD_REQUEST,
-					guardResult.error.message
+					guardResult.error.message,
+					undefined,
+					traceId,
+					undefined
 				);
 
 			// Hash Password Pipeline Step
@@ -123,7 +126,7 @@ export class CreateUserCommandHandler
 				traceId,
 				undefined
 			);
-		});
+		}, traceId);
 	}
 }
 //#endregion

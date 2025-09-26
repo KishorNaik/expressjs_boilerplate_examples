@@ -10,8 +10,8 @@ import {
 	Tags,
 	Request,
 	Middlewares,
-  Response,
-  Put
+	Response,
+	Put,
 } from 'tsoa';
 import express from 'express';
 import { DataResponse, StatusCodes } from '@kishornaik/utils';
@@ -27,18 +27,18 @@ export class UpdateUserEndpoint extends Endpoint {
 	/**
 	 * Update User
 	 */
-	@Put("{id}")
+	@Put('{id}')
 	@Produces('application/json')
 	@SuccessResponse(StatusCodes.CREATED, 'Ok') // Custom success response
-  @Response(StatusCodes.BAD_REQUEST, 'Bad Request')
+	@Response(StatusCodes.BAD_REQUEST, 'Bad Request')
 	@Middlewares([ValidationMiddleware(UpdateUserRequestDto)])
 	public async putAsync(
 		@Request() req: express.Request,
-    @Path() id: string,
+		@Path() id: string,
 		@Body() body: UpdateUserRequestDto
 	): Promise<DataResponse<UpdateUserResponseDto>> {
 		// Consume Command
-    body.id = id;
+		body.id = id;
 		const response = await mediator.send(new UpdateUserCommand(body));
 
 		// Set Status Code based on the response

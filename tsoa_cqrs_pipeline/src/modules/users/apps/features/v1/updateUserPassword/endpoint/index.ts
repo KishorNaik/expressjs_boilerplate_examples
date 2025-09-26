@@ -10,9 +10,9 @@ import {
 	Tags,
 	Request,
 	Middlewares,
-  Response,
-  Put,
-  Patch
+	Response,
+	Put,
+	Patch,
 } from 'tsoa';
 import express from 'express';
 import { DataResponse, StatusCodes } from '@kishornaik/utils';
@@ -28,18 +28,18 @@ export class UpdatePasswordUserEndpoint extends Endpoint {
 	/**
 	 * Update User Password
 	 */
-	@Patch("{id}")
+	@Patch('{id}')
 	@Produces('application/json')
 	@SuccessResponse(StatusCodes.CREATED, 'Ok') // Custom success response
-  @Response(StatusCodes.BAD_REQUEST, 'Bad Request')
+	@Response(StatusCodes.BAD_REQUEST, 'Bad Request')
 	@Middlewares([ValidationMiddleware(UpdateUserPasswordRequestDto)])
 	public async patchAsync(
 		@Request() req: express.Request,
-    @Path() id: string,
+		@Path() id: string,
 		@Body() body: UpdateUserPasswordRequestDto
 	): Promise<DataResponse<UpdateUserPasswordResponseDto>> {
 		// Consume Command
-    body.id = id;
+		body.id = id;
 		const response = await mediator.send(new UpdateUserPasswordCommand(body));
 
 		// Set Status Code based on the response

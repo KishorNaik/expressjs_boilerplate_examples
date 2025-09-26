@@ -13,7 +13,7 @@ import {
 } from '@kishornaik/utils';
 import { GetUserByIdRequestDto, GetUserByIdResponseDto } from '../contract';
 import { getTraceId, logger } from '@/shared/utils/helpers/loggers';
-import { GetUserByIdDbService } from './services/db';
+import { GetUserByIdDbService } from '../services/db';
 
 // #region Query
 @sealed
@@ -51,10 +51,9 @@ export class GetUserByIdQueryHandler
 	}
 
 	public async handle(value: GetUserByIdQuery): Promise<DataResponse<GetUserByIdResponseDto>> {
+		// Get traceId
+		const traceId = getTraceId();
 		return await ExceptionsWrapper.tryCatchPipelineAsync(async () => {
-			// Get traceId
-			const traceId = getTraceId();
-
 			// Guard
 			const guardResult = new GuardWrapper()
 				.check(value, `value`)
@@ -63,7 +62,10 @@ export class GetUserByIdQueryHandler
 			if (guardResult?.isErr())
 				return DataResponseFactory.error(
 					StatusCodes.BAD_REQUEST,
-					guardResult.error.message
+					guardResult.error.message,
+					undefined,
+					traceId,
+					undefined
 				);
 
 			// Db Service Pipeline Steps
@@ -84,7 +86,7 @@ export class GetUserByIdQueryHandler
 				traceId,
 				undefined
 			);
-		});
+		}, traceId);
 	}
 }
 //#endregion

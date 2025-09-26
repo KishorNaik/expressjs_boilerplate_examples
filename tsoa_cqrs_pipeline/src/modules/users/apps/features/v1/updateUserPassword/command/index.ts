@@ -12,8 +12,8 @@ import {
 	StatusCodes,
 } from '@kishornaik/utils';
 import { UpdateUserPasswordRequestDto, UpdateUserPasswordResponseDto } from '../contract';
-import { logger } from '@/shared/utils/helpers/loggers';
-import { UpdatePasswordDbService } from './services/db';
+import { getTraceId, logger } from '@/shared/utils/helpers/loggers';
+import { UpdatePasswordDbService } from '../services/db';
 import {
 	IHashPasswordServiceResult,
 	UserHashPasswordService,
@@ -63,6 +63,9 @@ export class UpdateUserPasswordCommandHandler
 	public async handle(
 		value: UpdateUserPasswordCommand
 	): Promise<DataResponse<UpdateUserPasswordResponseDto>> {
+		// Get traceId
+		const traceId = getTraceId();
+
 		return await ExceptionsWrapper.tryCatchPipelineAsync(async () => {
 			// Guard
 			const guard = new GuardWrapper()
@@ -70,7 +73,13 @@ export class UpdateUserPasswordCommandHandler
 				.check(value.request, `request`)
 				.validate();
 			if (guard.isErr())
-				return DataResponseFactory.error(guard.error.statusCode, guard.error.message);
+				return DataResponseFactory.error(
+					guard.error.statusCode,
+					guard.error.message,
+					undefined,
+					traceId,
+					undefined
+				);
 
 			const { id, password } = value.request;
 
@@ -100,9 +109,12 @@ export class UpdateUserPasswordCommandHandler
 			return DataResponseFactory.success(
 				StatusCodes.OK,
 				response,
-				`Password updated successfully`
+				`Password updated successfully`,
+				undefined,
+				traceId,
+				undefined
 			);
-		});
+		}, traceId);
 	}
 }
 

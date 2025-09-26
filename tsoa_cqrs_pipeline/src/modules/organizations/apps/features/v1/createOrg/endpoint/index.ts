@@ -10,7 +10,7 @@ import {
 	Tags,
 	Request,
 	Middlewares,
-  Response
+	Response,
 } from 'tsoa';
 import express from 'express';
 import { DataResponse, StatusCodes } from '@kishornaik/utils';
@@ -29,7 +29,7 @@ export class CreateOrganizationEndpoint extends Endpoint {
 	@Post()
 	@Produces('application/json')
 	@SuccessResponse(StatusCodes.CREATED, 'Ok') // Custom success response
-  @Response(StatusCodes.BAD_REQUEST, 'Bad Request')
+	@Response(StatusCodes.BAD_REQUEST, 'Bad Request')
 	@Middlewares([ValidationMiddleware(CreateOrgRequestDto)])
 	public async postAsync(
 		@Request() req: express.Request,

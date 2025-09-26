@@ -8,7 +8,7 @@ import {
 	sealed,
 	Service,
 } from '@kishornaik/utils';
-import { UpdateUserRequestDto, UpdateUserResponseDto } from '../../../contract';
+import { UpdateUserRequestDto, UpdateUserResponseDto } from '../../contract';
 
 export interface IUpdateUserDbService
 	extends IServiceHandlerAsync<UpdateUserRequestDto, UpdateUserResponseDto> {}

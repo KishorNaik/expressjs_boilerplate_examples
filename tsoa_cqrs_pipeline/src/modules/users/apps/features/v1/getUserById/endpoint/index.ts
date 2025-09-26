@@ -10,7 +10,7 @@ import {
 	Tags,
 	Request,
 	Middlewares,
-  Response
+	Response,
 } from 'tsoa';
 import express from 'express';
 import { DataResponse, StatusCodes } from '@kishornaik/utils';
@@ -29,7 +29,7 @@ export class GetUserByIdEndpoint extends Endpoint {
 	@Get('{id}')
 	@Produces('application/json')
 	@SuccessResponse(StatusCodes.OK, 'Ok') // Custom success response
-  @Response(StatusCodes.BAD_REQUEST, 'Bad Request')
+	@Response(StatusCodes.BAD_REQUEST, 'Bad Request')
 	@Middlewares([ValidationMiddleware(GetUserByIdRequestDto)])
 	public async getAsync(
 		@Request() req: express.Request,

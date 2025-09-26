@@ -11,7 +11,7 @@ import {
 	Request,
 	Middlewares,
 	Queries,
-  Response
+	Response,
 } from 'tsoa';
 import express from 'express';
 import { DataResponse, StatusCodes } from '@kishornaik/utils';
@@ -30,13 +30,14 @@ export class GetUsersEndpoint extends Endpoint {
 	@Get()
 	@Produces('application/json')
 	@SuccessResponse(StatusCodes.OK, 'Ok') // Custom success response
-  @Response(StatusCodes.BAD_REQUEST, 'Bad Request')
-  @Response(StatusCodes.NOT_FOUND, 'Not Found')
+	@Response(StatusCodes.BAD_REQUEST, 'Bad Request')
+	@Response(StatusCodes.NOT_FOUND, 'Not Found')
 	@Middlewares([ValidationMiddleware(GetUsersRequestDto)])
 	public async getsAsync(
 		@Request() req: express.Request,
 		@Queries() request: GetUsersRequestDto
-	) : Promise<DataResponse<GetUsersResponseDto[]>> { // Note: Do not add Array as Type use instead [], otherwise tsoa will throw error
+	): Promise<DataResponse<GetUsersResponseDto[]>> {
+		// Note: Do not add Array as Type use instead [], otherwise tsoa will throw error
 		// Consume Query
 		const response = await mediator.send(new GetUsersQuery(request));
 		// Set Status Code based on the response

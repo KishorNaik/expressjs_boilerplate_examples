@@ -11,9 +11,9 @@ import {
 	sealed,
 	StatusCodes,
 } from '@kishornaik/utils';
-import { logger } from '@/shared/utils/helpers/loggers';
+import { getTraceId, logger } from '@/shared/utils/helpers/loggers';
 import { GetOrgByIdRequestDto, GetOrgByIdResponseDto } from '../contract';
-import { GetOrgByIdDbService } from './services/db';
+import { GetOrgByIdDbService } from '../services/db';
 
 // #region Query
 @sealed
@@ -51,6 +51,9 @@ export class GetOrgByIdQueryHandler
 	}
 
 	public async handle(value: GetOrgByIdQuery): Promise<DataResponse<GetOrgByIdResponseDto>> {
+		// Get traceId
+		const traceId = getTraceId();
+
 		return await ExceptionsWrapper.tryCatchPipelineAsync(async () => {
 			// Guard
 			const guardResult = new GuardWrapper()
@@ -60,7 +63,10 @@ export class GetOrgByIdQueryHandler
 			if (guardResult?.isErr())
 				return DataResponseFactory.error(
 					StatusCodes.BAD_REQUEST,
-					guardResult.error.message
+					guardResult.error.message,
+					undefined,
+					traceId,
+					undefined
 				);
 
 			// Db Service Pipeline Steps
@@ -74,7 +80,7 @@ export class GetOrgByIdQueryHandler
 			);
 
 			return DataResponseFactory.success(StatusCodes.OK, result, 'Success');
-		});
+		}, traceId);
 	}
 }
 //#endregion

@@ -13,8 +13,8 @@ import {
 	StatusCodes,
 } from '@kishornaik/utils';
 import { CreateOrgRequestDto, CreateOrgResponseDto } from '../contract';
-import { logger } from '@/shared/utils/helpers/loggers';
-import { CreateOrgDbService } from './services/db';
+import { getTraceId, logger } from '@/shared/utils/helpers/loggers';
+import { CreateOrgDbService } from '../services/db';
 
 //#region Command
 @sealed
@@ -53,6 +53,9 @@ export class CreateOrgCommandHandler
 	}
 
 	public async handle(value: CreateOrgCommand): Promise<DataResponse<CreateOrgResponseDto>> {
+		// Get traceId
+		const traceId = getTraceId();
+
 		return await ExceptionsWrapper.tryCatchPipelineAsync(async () => {
 			// Guard
 			const guard = new GuardWrapper()
@@ -60,7 +63,13 @@ export class CreateOrgCommandHandler
 				.check(value.request, `request`)
 				.validate();
 			if (guard.isErr())
-				return DataResponseFactory.error(guard.error.statusCode, guard.error.message);
+				return DataResponseFactory.error(
+					guard.error.statusCode,
+					guard.error.message,
+					undefined,
+					traceId,
+					undefined
+				);
 
 			const { request } = value;
 
@@ -79,8 +88,15 @@ export class CreateOrgCommandHandler
 			// Get Response from Response Pipeline Step
 			const response = this._pipeline.getResult<CreateOrgResponseDto>(PipelineSteps.RESPONSE);
 
-			return DataResponseFactory.success(StatusCodes.CREATED, response, 'Success');
-		});
+			return DataResponseFactory.success(
+				StatusCodes.CREATED,
+				response,
+				'Success',
+				undefined,
+				traceId,
+				undefined
+			);
+		}, traceId);
 	}
 }
 

@@ -13,8 +13,8 @@ import {
 	VoidResult,
 } from '@kishornaik/utils';
 import { RemoveUserRequestDto, RemoveUserResponseDto } from '../contract';
-import { logger } from '@/shared/utils/helpers/loggers';
-import { RemoveUserDbService } from './services/db';
+import { getTraceId, logger } from '@/shared/utils/helpers/loggers';
+import { RemoveUserDbService } from '../services/db';
 
 // #region Command
 @sealed
@@ -52,6 +52,8 @@ export class RemoveUserCommandHandler
 	}
 
 	public async handle(value: RemoveUserCommand): Promise<DataResponse<RemoveUserResponseDto>> {
+		const traceId = getTraceId();
+
 		return await ExceptionsWrapper.tryCatchPipelineAsync(async () => {
 			// Guard
 			const guard = new GuardWrapper()
@@ -60,7 +62,13 @@ export class RemoveUserCommandHandler
 				.validate();
 
 			if (guard.isErr())
-				return DataResponseFactory.error(guard.error.statusCode, guard.error.message);
+				return DataResponseFactory.error(
+					guard.error.statusCode,
+					guard.error.message,
+					undefined,
+					traceId,
+					undefined
+				);
 
 			// Pipeline Steps
 			await this._pipeline.step(pipelineSteps.DB_SERVICE, async () => {
@@ -70,8 +78,15 @@ export class RemoveUserCommandHandler
 			const response = new RemoveUserResponseDto();
 			response.message = `User removed successfully.`;
 
-			return DataResponseFactory.success(StatusCodes.OK, response, 'Success');
-		});
+			return DataResponseFactory.success(
+				StatusCodes.OK,
+				response,
+				'Success',
+				undefined,
+				traceId,
+				undefined
+			);
+		}, traceId);
 	}
 }
 
