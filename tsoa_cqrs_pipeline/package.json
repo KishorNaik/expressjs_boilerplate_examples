@@ -46,8 +46,7 @@
 		"debug:kafka": "cross-env NODE_ENV=development node --inspect=0.0.0.0:9233 -r ts-node/register -r tsconfig-paths/register src/workers/kafka/index.ts",
 		"debug:pusher": "cross-env NODE_ENV=development node --inspect=0.0.0.0:9234 -r ts-node/register -r tsconfig-paths/register src/workers/pusher/index.ts",
 		"debug:all-workers": "concurrently -k -n cron,bullmq,rabbitmq,kafka,pusher -c yellow,cyan,magenta,green,blue \"npm run debug:cron\" \"npm run debug:bullmq\" \"npm run debug:rabbitmq\" \"npm run debug:kafka\" \"npm run debug:pusher\"",
-		"test": "glob -c \"node --trace-deprecation --no-warnings --test --require ts-node/register -r tsconfig-paths/register\" \"./src/test/**/*.test.ts\"",
-		"run:test": "./run-tests.sh",
+		"test": "glob -c \"node --trace-deprecation --no-warnings --test --require ts-node/register -r tsconfig-paths/register\" \"./src/**/*.test.ts\"",
 		"lint": "eslint --ignore-path .gitignore --ext .ts src",
 		"lint:fix": "npm run lint -- --fix",
 		"prettier": "npx prettier --config .prettierrc --write .",
@@ -58,7 +57,7 @@
 		"trpc:type": "npx dts-bundle-generator ./src/modules/app.Module.ts -o trpc-types/TRPCAppRouter.d.ts"
 	},
 	"dependencies": {
-		"@kishornaik/utils": "1.0.8",
+		"@kishornaik/utils": "1.0.7",
 		"@swc/core": "1.13.5",
 		"@trpc/client": "11.5.1",
 		"@trpc/server": "11.5.1",
