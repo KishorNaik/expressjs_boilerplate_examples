@@ -94,16 +94,15 @@ If you prefer to run the application with PM2 directly on your server without Do
     npm run build
     ```
 4.  **Start the applications using PM2**:
-
-    -   **API**:
+    - **API**:
         ```bash
         pm2 start ecosystem.config.js --only prod
         ```
-    -   **BullMQ Worker**:
+    - **BullMQ Worker**:
         ```bash
         pm2 start ecosystem.config.js --only bullmq-worker
         ```
-    -   **Cron Job Worker**:
+    - **Cron Job Worker**:
         ```bash
         pm2 start ecosystem.config.js --only cron-worker
         ```
@@ -112,10 +111,15 @@ If you prefer to run the application with PM2 directly on your server without Do
 
 Here are some useful PM2 commands:
 
--   **List all running processes**: `pm2 list`
--   **Monitor logs**: `pm2 logs`
--   **Stop a process**: `pm2 stop <process-name>`
--   **Restart a process**: `pm2 restart <process-name>`
--   **Delete a process**: `pm2 delete <process-name>`
+| Command                      | Description                             |
+| :--------------------------- | :-------------------------------------- |
+| `pm2 list`                   | List all running processes              |
+| `pm2 logs`                   | Monitor logs                            |
+| `pm2 stop <process-name>`    | Stop a process                          |
+| `pm2 restart <process-name>` | Restart a process                       |
+| `pm2 delete <process-name>`  | Delete a process                        |
+| `pm2 save`                   | Save current process list for reboot    |
+| `pm2 startup`                | Generate startup script for auto-launch |
+| `pm2 monit`                  | Monitor the process                     |
 
 For more information on PM2, refer to the [official PM2 documentation](https://pm2.keymetrics.io/docs/usage/quick-start/).
