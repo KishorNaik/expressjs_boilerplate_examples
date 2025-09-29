@@ -11,7 +11,7 @@ import {
 	sealed,
 	StatusCodes,
 } from '@kishornaik/utils';
-import { UpdateUserPasswordRequestDto, UpdateUserPasswordResponseDto } from '../contract';
+import { UpdateUserPasswordRequestDto, UpdateUserPasswordRequestParamsDto, UpdateUserPasswordResponseDto } from '../contract';
 import { getTraceId, logger } from '@/shared/utils/helpers/loggers';
 import { UpdatePasswordDbService } from '../services/db';
 import {
@@ -25,15 +25,21 @@ export class UpdateUserPasswordCommand extends RequestData<
 	DataResponse<UpdateUserPasswordResponseDto>
 > {
 	private readonly _request: UpdateUserPasswordRequestDto;
+  private readonly _requestParam:UpdateUserPasswordRequestParamsDto;
 
-	public constructor(request: UpdateUserPasswordRequestDto) {
+	public constructor(request: UpdateUserPasswordRequestDto,requestParam:UpdateUserPasswordRequestParamsDto) {
 		super();
 		this._request = request;
+    this._requestParam=requestParam
 	}
 
 	public get request(): UpdateUserPasswordRequestDto {
 		return this._request;
 	}
+
+  public get requestParam(): UpdateUserPasswordRequestParamsDto {
+    return this._requestParam;
+  }
 }
 //#endregion
 
@@ -71,6 +77,7 @@ export class UpdateUserPasswordCommandHandler
 			const guard = new GuardWrapper()
 				.check(value, `value`)
 				.check(value.request, `request`)
+        .check(value.requestParam, `requestParam`)
 				.validate();
 			if (guard.isErr())
 				return DataResponseFactory.error(
@@ -81,12 +88,12 @@ export class UpdateUserPasswordCommandHandler
 					undefined
 				);
 
-			const { id, password } = value.request;
+			const { request, requestParam} = value;
 
 			// Hash Password Pipeline Step
 			await this._pipeline.step(pipelineSteps.HASH_PASSWORD_SERVICE, async () => {
 				return await this._userHashPasswordService.handleAsync({
-					password: password,
+					password: request.password,
 				});
 			});
 
@@ -98,7 +105,7 @@ export class UpdateUserPasswordCommandHandler
 				return await this._updatePasswordDbService.handleAsync({
 					newPasswordHash: hashPasswordResult.hash,
 					newPasswordSalt: hashPasswordResult.salt,
-					userId: id,
+					userId: requestParam.id,
 				});
 			});
 

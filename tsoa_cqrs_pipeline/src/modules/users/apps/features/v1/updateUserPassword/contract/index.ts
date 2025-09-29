@@ -3,10 +3,15 @@ import { Type } from 'class-transformer';
 import { IsNotEmpty, IsString, IsUUID, Length, Matches } from 'class-validator';
 
 // #region Request Dto
+
+export class UpdateUserPasswordRequestParamsDto {
+  @IsNotEmpty()
+  @IsUUID()
+  @Type(() => String)
+  public id?: string;
+}
+
 export class UpdateUserPasswordRequestDto {
-	@IsUUID()
-	@Type(() => String)
-	public id?: string;
 
 	@IsNotEmpty()
 	@IsString()

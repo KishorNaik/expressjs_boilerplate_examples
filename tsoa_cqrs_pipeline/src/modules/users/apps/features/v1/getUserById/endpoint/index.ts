@@ -30,7 +30,9 @@ export class GetUserByIdEndpoint extends Endpoint {
 	@Produces('application/json')
 	@SuccessResponse(StatusCodes.OK, 'Ok') // Custom success response
 	@Response(StatusCodes.BAD_REQUEST, 'Bad Request')
-	@Middlewares([ValidationMiddleware(GetUserByIdRequestDto)])
+	@Middlewares([ValidationMiddleware({
+    params: GetUserByIdRequestDto
+  })])
 	public async getAsync(
 		@Request() req: express.Request,
 		@Path() id: string

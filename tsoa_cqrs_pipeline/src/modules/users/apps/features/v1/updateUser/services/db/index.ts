@@ -8,20 +8,25 @@ import {
 	sealed,
 	Service,
 } from '@kishornaik/utils';
-import { UpdateUserRequestDto, UpdateUserResponseDto } from '../../contract';
+import { UpdateUserQueryParamsDto, UpdateUserRequestDto, UpdateUserResponseDto } from '../../contract';
+
+export interface IUpdateUserDbServiceParameters {
+  request: UpdateUserRequestDto;
+  requestParam: UpdateUserQueryParamsDto;
+}
 
 export interface IUpdateUserDbService
-	extends IServiceHandlerAsync<UpdateUserRequestDto, UpdateUserResponseDto> {}
+	extends IServiceHandlerAsync<IUpdateUserDbServiceParameters, UpdateUserResponseDto> {}
 
 @sealed
 @Service()
 export class UpdateUserDbService implements IUpdateUserDbService {
 	public async handleAsync(
-		params: UpdateUserRequestDto
+		params: IUpdateUserDbServiceParameters
 	): Promise<Result<UpdateUserResponseDto, ResultError>> {
 		return await ExceptionsWrapper.tryCatchResultAsync(async () => {
 			// Guard
-			const guard = new GuardWrapper().check(params, `params`).validate();
+			const guard = new GuardWrapper().check(params, `params`).check(params.request, `request`).check(params.requestParam, `requestParam`).validate();
 
 			if (guard.isErr()) return ResultFactory.errorInstance(guard.error);
 
@@ -29,7 +34,7 @@ export class UpdateUserDbService implements IUpdateUserDbService {
 			// ......
 
 			const response = new UpdateUserResponseDto();
-			response.identifier = params.id;
+			response.identifier = params.requestParam.id;
 
 			return ResultFactory.success(response);
 		});

@@ -3,11 +3,15 @@ import { Type } from 'class-transformer';
 import { IsEmail, IsMobilePhone, IsNotEmpty, IsString, IsUUID, Length } from 'class-validator';
 
 // #region Request Dto
-export class UpdateUserRequestDto {
-	@IsNotEmpty()
+
+export class UpdateUserQueryParamsDto {
+  @IsNotEmpty()
 	@IsUUID()
 	@IsSafeString()
 	public id?: string;
+}
+
+export class UpdateUserRequestDto {
 
 	@IsNotEmpty()
 	@IsString()

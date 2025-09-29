@@ -30,7 +30,9 @@ export class CreateUserEndpoint extends Endpoint {
 	@Produces('application/json')
 	@SuccessResponse(StatusCodes.CREATED, 'Ok') // Custom success response
 	@Response(StatusCodes.BAD_REQUEST, 'Bad Request')
-	@Middlewares([ValidationMiddleware(CreateUserRequestDto)])
+	@Middlewares([ValidationMiddleware({
+    body: CreateUserRequestDto
+  })])
 	public async postAsync(
 		@Request() req: express.Request,
 		@Body() body: CreateUserRequestDto

@@ -30,7 +30,9 @@ export class CreateOrganizationEndpoint extends Endpoint {
 	@Produces('application/json')
 	@SuccessResponse(StatusCodes.CREATED, 'Ok') // Custom success response
 	@Response(StatusCodes.BAD_REQUEST, 'Bad Request')
-	@Middlewares([ValidationMiddleware(CreateOrgRequestDto)])
+	@Middlewares([ValidationMiddleware({
+    body: CreateOrgRequestDto
+  })])
 	public async postAsync(
 		@Request() req: express.Request,
 		@Body() body: CreateOrgRequestDto

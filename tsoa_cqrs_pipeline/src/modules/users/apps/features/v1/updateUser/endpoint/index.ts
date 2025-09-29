@@ -18,7 +18,7 @@ import { DataResponse, StatusCodes } from '@kishornaik/utils';
 import { ValidationMiddleware } from '@/middlewares/security/validations';
 import { Endpoint } from '@/shared/utils/helpers/tsoa';
 import { mediator } from '@/shared/utils/helpers/medaitR';
-import { UpdateUserRequestDto, UpdateUserResponseDto } from '../contract';
+import { UpdateUserQueryParamsDto, UpdateUserRequestDto, UpdateUserResponseDto } from '../contract';
 import { UpdateUserCommand } from '../command';
 
 @Route('api/v1/users')
@@ -31,15 +31,20 @@ export class UpdateUserEndpoint extends Endpoint {
 	@Produces('application/json')
 	@SuccessResponse(StatusCodes.CREATED, 'Ok') // Custom success response
 	@Response(StatusCodes.BAD_REQUEST, 'Bad Request')
-	@Middlewares([ValidationMiddleware(UpdateUserRequestDto)])
+	@Middlewares([ValidationMiddleware({
+    body: UpdateUserRequestDto,
+    params:UpdateUserQueryParamsDto
+  })])
 	public async putAsync(
 		@Request() req: express.Request,
 		@Path() id: string,
 		@Body() body: UpdateUserRequestDto
 	): Promise<DataResponse<UpdateUserResponseDto>> {
 		// Consume Command
-		body.id = id;
-		const response = await mediator.send(new UpdateUserCommand(body));
+    const requestParams=new UpdateUserQueryParamsDto();
+    requestParams.id=id;
+
+		const response = await mediator.send(new UpdateUserCommand(body,requestParams));
 
 		// Set Status Code based on the response
 		this.setStatus(response.statusCode);

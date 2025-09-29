@@ -11,7 +11,7 @@ import {
 	sealed,
 	StatusCodes,
 } from '@kishornaik/utils';
-import { UpdateUserRequestDto, UpdateUserResponseDto } from '../contract';
+import { UpdateUserQueryParamsDto, UpdateUserRequestDto, UpdateUserResponseDto } from '../contract';
 import { getTraceId, logger } from '@/shared/utils/helpers/loggers';
 import { UpdateUserDbService } from '../services/db';
 
@@ -19,15 +19,21 @@ import { UpdateUserDbService } from '../services/db';
 @sealed
 export class UpdateUserCommand extends RequestData<DataResponse<UpdateUserResponseDto>> {
 	private readonly _request: UpdateUserRequestDto;
+  private readonly _requestParam:UpdateUserQueryParamsDto;
 
-	constructor(request: UpdateUserRequestDto) {
+	constructor(request: UpdateUserRequestDto,requestParam:UpdateUserQueryParamsDto) {
 		super();
 		this._request = request;
+    this._requestParam=requestParam
 	}
 
 	public get request(): UpdateUserRequestDto {
 		return this._request;
 	}
+
+  public get requestParam():UpdateUserQueryParamsDto{
+    return this._requestParam
+  }
 }
 // #endregion
 
@@ -59,6 +65,7 @@ export class UpdateUserCommandHandler
 			const guard = new GuardWrapper()
 				.check(value, `value`)
 				.check(value.request, `request`)
+        .check(value.requestParam, `requestParam`)
 				.validate();
 			if (guard.isErr())
 				return DataResponseFactory.error(
@@ -69,11 +76,14 @@ export class UpdateUserCommandHandler
 					undefined
 				);
 
-			const { request } = value;
+			const { request,requestParam } = value;
 
 			// Db Service Pipeline Step
 			await this._pipeline.step(PipelineSteps.DB_SERVICE, async () => {
-				return await this._updateUserDbService.handleAsync(request);
+				return await this._updateUserDbService.handleAsync({
+          request:request,
+          requestParam:requestParam
+        });
 			});
 
 			// Get Response

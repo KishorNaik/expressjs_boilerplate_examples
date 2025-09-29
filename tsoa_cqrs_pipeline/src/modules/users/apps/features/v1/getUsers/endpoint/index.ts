@@ -32,7 +32,9 @@ export class GetUsersEndpoint extends Endpoint {
 	@SuccessResponse(StatusCodes.OK, 'Ok') // Custom success response
 	@Response(StatusCodes.BAD_REQUEST, 'Bad Request')
 	@Response(StatusCodes.NOT_FOUND, 'Not Found')
-	@Middlewares([ValidationMiddleware(GetUsersRequestDto)])
+	@Middlewares([ValidationMiddleware({
+    query: GetUsersRequestDto
+  })])
 	public async getsAsync(
 		@Request() req: express.Request,
 		@Queries() request: GetUsersRequestDto

@@ -30,8 +30,10 @@ export class RemoveUserEndpoint extends Endpoint {
 	@Delete('{id}')
 	@Produces('application/json')
 	@SuccessResponse(StatusCodes.OK, 'Ok') // Custom success response
-	//@Response(StatusCodes.BAD_REQUEST, 'Bad Request')
-	@Middlewares([ValidationMiddleware(RemoveUserRequestDto)])
+	@Response(StatusCodes.BAD_REQUEST, 'Bad Request')
+	@Middlewares([ValidationMiddleware({
+    params: RemoveUserRequestDto
+  })])
 	public async deleteAsync(
 		@Request() req: express.Request,
 		@Path() id: string
