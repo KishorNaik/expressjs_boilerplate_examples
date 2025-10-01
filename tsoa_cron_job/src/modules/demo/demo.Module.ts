@@ -1,4 +1,4 @@
 import { WorkerCronJob } from '@kishornaik/utils';
-import { publishWelcomeUserEmailIntegrationEventJob } from './apps/features/v1/runJob';
+import { runJob } from './apps/features/v1/runJob';
 
-export const demoCronJobModules: WorkerCronJob[] = [publishWelcomeUserEmailIntegrationEventJob];
+export const demoCronJobModules: WorkerCronJob[] = [runJob];

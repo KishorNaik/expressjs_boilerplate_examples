@@ -2,7 +2,7 @@ import { logger } from '@/shared/utils/helpers/loggers';
 import { Container, CronJob, delay, WorkerCronJob } from '@kishornaik/utils';
 import { RunBatchService } from '../service/batch';
 
-export const publishWelcomeUserEmailIntegrationEventJob: WorkerCronJob = async () => {
+export const runJob: WorkerCronJob = async () => {
 	let isRunning = false;
 	const job = new CronJob(
 		`*/20 * * * * *`,
