@@ -14,11 +14,11 @@ import {
 import { demoBatch, DemoProcessService, DemoRecord } from '../process';
 import { logger } from '@/shared/utils/helpers/loggers';
 
-export interface IRunJobService extends IServiceHandlerNoParamsVoidAsync {}
+export interface IRunBatchService extends IServiceHandlerNoParamsVoidAsync {}
 
 @sealed
 @Service()
-export class RunJobService implements IRunJobService {
+export class RunBatchService implements IRunBatchService {
 	private readonly _demoProcessService: DemoProcessService;
 
 	public constructor() {

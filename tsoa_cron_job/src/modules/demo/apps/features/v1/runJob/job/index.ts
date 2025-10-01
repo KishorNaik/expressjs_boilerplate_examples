@@ -1,6 +1,6 @@
 import { logger } from '@/shared/utils/helpers/loggers';
 import { Container, CronJob, delay, WorkerCronJob } from '@kishornaik/utils';
-import { RunJobService } from '../service/runJob';
+import { RunBatchService } from '../service/batch';
 
 export const publishWelcomeUserEmailIntegrationEventJob: WorkerCronJob = async () => {
 	let isRunning = false;
@@ -12,7 +12,7 @@ export const publishWelcomeUserEmailIntegrationEventJob: WorkerCronJob = async (
 
 			logger.info(`Cron Job Started....`);
 
-			const result = await Container.get(RunJobService).handleAsync();
+			const result = await Container.get(RunBatchService).handleAsync();
 
 			if (result.isErr()) {
 				logger.error(`CRON Error: ${result.error.message}`);
